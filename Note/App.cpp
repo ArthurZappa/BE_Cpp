@@ -11,18 +11,24 @@ String output4State = "off";
 const int output5 = LED_BUILTIN;
 const int output4 = 4;
 
+App::App():server(80){}//constructor who initializes server http : port 80
 
 
-WiFiServer App::Open_Wifi_Server(char* id, char* pw){
+void App::Open_Wifi_Server(char* id, char* pw){
 
   // Replace with your network credentials
   this->ssid = id ;
+  Serial.println(this->ssid);
   this->password = pw;
 
-  // Set web server port number to 80
-  WiFiServer server(80);
+   // Initialize the output variables as outputs
+  pinMode(output5, OUTPUT);
+  pinMode(output4, OUTPUT);
+  // Set outputs to LOW
+  digitalWrite(output5, LOW);
+  digitalWrite(output4, LOW);
 
-  return server;
+
 }
 
 
@@ -37,19 +43,23 @@ void App::Connect_To_Wifi_Network(void){
   } 
 }
 
-void App::Start_Wifi_Server(WiFiServer server){
+void App::Start_Wifi_Server(void){
    // Print local IP address and start web server
   Serial.println("");
   Serial.println("WiFi connected.");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
-  server.begin();
+  this->server.begin();
+  
+  
   
 }
 
 
-void App::Start_Client_Connection(WiFiServer server){
-   this->client = server.available();   // Listen for incoming clients
+void App::Start_Client_Connection(void){
+  Serial.println(this->server.status());
+   this->client = this->server.available();   // Listen for incoming clients
+   Serial.println(this->server.status());
 
   if (this->client) {                             // If a new client connects,
     Serial.println("New Client.");          // print a message out in the serial port          
@@ -61,21 +71,20 @@ void App::Start_Client_Connection(WiFiServer server){
 }
 
 void App::Init_Server(void){
-  WiFiServer server = Open_Wifi_Server("Amélies6", "amelie99");
+  Open_Wifi_Server("Amélies6", "amelie99");
   Connect_To_Wifi_Network();
-  Start_Wifi_Server(server);
-  Start_Client_Connection(server);
+  Start_Wifi_Server();
 }
 
 
 
 void App::Close_Client_Connection(void){
 
- if (client){
+ if (this->client){
    // Clear the header variable
     header = "";
     // Close the connection
-    client.stop();
+    this->client.stop();
     Serial.println("Client disconnected.");
     Serial.println("");
  }
@@ -84,40 +93,40 @@ void App::Close_Client_Connection(void){
 void App::Html_Display(void){
 
   // Display the HTML web page
-  client.println("<!DOCTYPE html><html>");
-  client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
-  client.println("<link rel=\"icon\" href=\"data:,\">");
+  this->client.println("<!DOCTYPE html><html>");
+  this->client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
+  this->client.println("<link rel=\"icon\" href=\"data:,\">");
   // CSS to style the on/off buttons 
   // Feel free to change the background-color and font-size attributes to fit your preferences
-  client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
-  client.println(".button { background-color: #195B6A; border: none; color: white; padding: 16px 40px;");
-  client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
-  client.println(".button2 {background-color: #77878A;}</style></head>");
+  this->client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
+  this->client.println(".button { background-color: #195B6A; border: none; color: white; padding: 16px 40px;");
+  this->client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
+  this->client.println(".button2 {background-color: #77878A;}</style></head>");
   
   // Web Page Heading
-  client.println("<body><h1>ESP8266 Web Server</h1>");
+  this->client.println("<body><h1>ESP8266 Web Server</h1>");
   
   // Display current state, and ON/OFF buttons for GPIO 5  
-  client.println("<p>Open a record - State " + output5State + "</p>");
+  this->client.println("<p>Open a record - State " + output5State + "</p>");
   // If the output5State is off, it displays the ON button       
   if (output5State=="off") {
-    client.println("<p><a href=\"/5/on\"><button class=\"button\">ON</button></a></p>");
+    this->client.println("<p><a href=\"/5/on\"><button class=\"button\">ON</button></a></p>");
   } else {
-    client.println("<p><a href=\"/5/off\"><button class=\"button button2\">OFF</button></a></p>");
+    this->client.println("<p><a href=\"/5/off\"><button class=\"button button2\">OFF</button></a></p>");
   } 
      
   // Display current state, and ON/OFF buttons for GPIO 4  
-  client.println("<p>Create new record - State " + output4State + "</p>");
+  this->client.println("<p>Create new record - State " + output4State + "</p>");
   // If the output4State is off, it displays the ON button       
   if (output4State=="off") {
-    client.println("<p><a href=\"/4/on\"><button class=\"button\">START</button></a></p>");
+    this->client.println("<p><a href=\"/4/on\"><button class=\"button\">START</button></a></p>");
   } else {
-    client.println("<p><a href=\"/4/off\"><button class=\"button button2\">STOP</button></a></p>");
+    this->client.println("<p><a href=\"/4/off\"><button class=\"button button2\">STOP</button></a></p>");
   }
-  client.println("</body></html>");
+  this->client.println("</body></html>");
   
   // The HTTP response ends with another blank line
-  client.println();
+  this->client.println();
   
 }
 
