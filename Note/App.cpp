@@ -4,8 +4,9 @@
 String header;
 
 // Auxiliar variables to store the current output state
-String output5State = "off";
-String output4State = "off";
+int new_sheet = 0;
+int choose_file = 0;
+int open_file = 0;
 
 // Assign output variables to GPIO pins
 const int output5 = LED_BUILTIN;
@@ -57,9 +58,7 @@ void App::Start_Wifi_Server(void){
 
 
 void App::Start_Client_Connection(void){
-  Serial.println(this->server.status());
-   this->client = this->server.available();   // Listen for incoming clients
-   Serial.println(this->server.status());
+   this->client = this->server.available();   // Listen for incoming client
 
   if (this->client) {                             // If a new client connects,
     Serial.println("New Client.");          // print a message out in the serial port          
@@ -92,66 +91,60 @@ void App::Close_Client_Connection(void){
 
 void App::Html_Display(void){
 
-  // Display the HTML web page
-  this->client.println("<!DOCTYPE html><html>");
-  this->client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
-  this->client.println("<link rel=\"icon\" href=\"data:,\">");
-  // CSS to style the on/off buttons 
-  // Feel free to change the background-color and font-size attributes to fit your preferences
-  this->client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
-  this->client.println(".button { background-color: #195B6A; border: none; color: white; padding: 16px 40px;");
-  this->client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
-  this->client.println(".button2 {background-color: #77878A;}</style></head>");
-  
-  // Web Page Heading
-  this->client.println("<body><h1>ESP8266 Web Server</h1>");
-  
-  // Display current state, and ON/OFF buttons for GPIO 5  
-  this->client.println("<p>Open a record - State " + output5State + "</p>");
-  // If the output5State is off, it displays the ON button       
-  if (output5State=="off") {
-    this->client.println("<p><a href=\"/5/on\"><button class=\"button\">ON</button></a></p>");
-  } else {
-    this->client.println("<p><a href=\"/5/off\"><button class=\"button button2\">OFF</button></a></p>");
-  } 
-     
-  // Display current state, and ON/OFF buttons for GPIO 4  
-  this->client.println("<p>Create new record - State " + output4State + "</p>");
-  // If the output4State is off, it displays the ON button       
-  if (output4State=="off") {
-    this->client.println("<p><a href=\"/4/on\"><button class=\"button\">START</button></a></p>");
-  } else {
-    this->client.println("<p><a href=\"/4/off\"><button class=\"button button2\">STOP</button></a></p>");
+  if (choose_file==0 && new_sheet ==0) {
+    
+      // Display the HTML web page
+    this->client.println("<!DOCTYPE html><html>");
+    this->client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
+    this->client.println("<link rel=\"icon\" href=\"data:,\">");
+    // CSS to style the on/off buttons 
+    // Feel free to change the background-color and font-size attributes to fit your preferences
+    this->client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
+    this->client.println(".button { background-color: #195B6A; border: none; color: white; padding: 16px 40px;");
+    this->client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
+    this->client.println(".button2 {background-color: #77878A;}</style></head>");
+    
+    // Web Page Heading
+    this->client.println("<body><h1>ESP8266 Web Server</h1>");
+    
+    // Display OPEN FILE button
+    this->client.println("<p>Open a record\"</p>");    
+    this->client.println("<p><a href=\"/CHOOSE\"><button class=\"button\">OPEN</button></a></p>");
+    
+    // Display START NEW RECORD button
+    this->client.println("<p>Create new record \"</p>");
+    this->client.println("<p><a href=\"/NEW\"><button class=\"button\">START</button></a></p>");
   }
-  this->client.println("</body></html>");
   
-  // The HTTP response ends with another blank line
-  this->client.println();
+  else if (new_sheet == 1) {   
+    //code Arthur
+  }
+
+  else if (choose_file == 1){
+    this->client.println("<!DOCTYPE html><html>");
+    this->client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><head>");
+    this->client.println("<body><label for=\"sheet\">Choose a .html file:</label>");
+    this->client.println("<input type=\"file\" id=\"sheet\" name=\"sheet\" accept=\".html\">");
+    this->client.println("<script>const sheet_ID = document.getElementById(\"sheet\");const sheet_URL = URL.createObjectURL(sheet_ID);</script>");
+    this->client.println("<p><a href=\"/OPEN\"><button class=\"button\">OPEN FILE</button></a></p>");
+    this->client.println("</body></html>");
+  }
   
 }
 
 
 void App::Manage_Gpio(void){
   
-   // turns the GPIOs on and off
-            if (header.indexOf("GET /5/on") >= 0) {
-              Serial.println("GPIO 5 on");
-              output5State = "on";
-              digitalWrite(output5, HIGH);
-            } else if (header.indexOf("GET /5/off") >= 0) {
-              Serial.println("GPIO 5 off");
-              output5State = "off";
-              digitalWrite(output5, LOW);
-            } else if (header.indexOf("GET /4/on") >= 0) {
-              Serial.println("GPIO 4 on");
-              output4State = "on";
-              digitalWrite(output4, HIGH);
-            } else if (header.indexOf("GET /4/off") >= 0) {
-              Serial.println("GPIO 4 off");
-              output4State = "off";
-              digitalWrite(output4, LOW);
-            }
-
+  // turns the GPIOs on and off
+  if (header.indexOf("GET /NEW") >= 0) {
+    Serial.println("Create a new sheet");
+    new_sheet = 1;
+  } else if (header.indexOf("GET /CHOOSE") >= 0) {
+    Serial.println("Choose a file");
+    choose_file = 1;
+  } else if (header.indexOf("GET /OPEN") >= 0) {
+    Serial.println("Open the file choosen");
+  }
 }
   
 void App::Manage_App(void){
