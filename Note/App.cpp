@@ -70,7 +70,7 @@ void App::Start_Client_Connection(void){
 }
 
 void App::Init_Server(void){
-  Open_Wifi_Server("Amélies6", "amelie99");
+  Open_Wifi_Server("iPhone de Arthur", "lemotdepasse");
   Connect_To_Wifi_Network();
   Start_Wifi_Server();
 }
@@ -119,8 +119,10 @@ void App::Html_Display(void){
   else if (new_sheet == 1) {   
     this->client.println("<!DOCTYPE html><html>");
     this->client.println("<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /><style>input[type=text]{width: 60%;  padding: 12px 18px;  margin: 7px 0;  box-sizing: border-box; border: 3px solid #ccc;}</style>");
-    this->client.println("</head><body><body style=\"background-color:#1E90FF;\"><center><p>Données de la nouvelle partition</p><br><br></center>");
-    this->client.println("<form> <br><br> <label for=\"lname\">Tempo</label> <input type=\"text\" id=\"lname\" name=\"lname\"></form><br><br><br></body></html>");
+    this->client.println("<FONT size=\"6pt\"><center><p><U>Create a new sheet </p><br><br></center></head> </U></FONT>");
+    this->client.println("<body><body style=\"background-color:#1E90FF;\">");
+    this->client.println("<form><label for=\"lname\">Tempo :</label> <input type=\"text\" id=\"lname\" name=\"lname\"></form><br><br><br><br><br><br><br><br><br>");
+    this->client.println("<p>Start Recording<br><a href=\"/START RECORDING\"><button class=\"button\">START</button></a></p></body></html>");
   }
 
   else if (choose_file == 1){
