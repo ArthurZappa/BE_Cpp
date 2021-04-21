@@ -8,10 +8,6 @@ int new_sheet = 0;
 int choose_file = 0;
 int open_file = 0;
 
-// Assign output variables to GPIO pins
-const int output5 = LED_BUILTIN;
-const int output4 = 4;
-
 App::App():server(80){}//constructor who initializes server http : port 80
 
 
@@ -21,15 +17,6 @@ void App::Open_Wifi_Server(char* id, char* pw){
   this->ssid = id ;
   Serial.println(this->ssid);
   this->password = pw;
-
-   // Initialize the output variables as outputs
-  pinMode(output5, OUTPUT);
-  pinMode(output4, OUTPUT);
-  // Set outputs to LOW
-  digitalWrite(output5, LOW);
-  digitalWrite(output4, LOW);
-
-
 }
 
 
