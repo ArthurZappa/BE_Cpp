@@ -70,7 +70,7 @@ void App::Start_Client_Connection(void){
 }
 
 void App::Init_Server(void){
-  Open_Wifi_Server("iPhone de Arthur", "lemotdepasse");
+  Open_Wifi_Server("Amélies6", "amelie99");
   Connect_To_Wifi_Network();
   Start_Wifi_Server();
 }
@@ -108,30 +108,55 @@ void App::Html_Display(void){
     this->client.println("<body><h1>ESP8266 Web Server</h1>");
     
     // Display OPEN FILE button
-    this->client.println("<p>Open a record\"</p>");    
+    this->client.println("<p>Open a record</p>");    
     this->client.println("<p><a href=\"/CHOOSE\"><button class=\"button\">OPEN</button></a></p>");
     
     // Display START NEW RECORD button
-    this->client.println("<p>Create new record \"</p>");
+    this->client.println("<p>Create new record</p>");
     this->client.println("<p><a href=\"/NEW\"><button class=\"button\">START</button></a></p>");
   }
   
-  else if (new_sheet == 1) {   // after tap on Start GPIO4 Button
+  else if (new_sheet == 1) {   
     this->client.println("<!DOCTYPE html><html>");
     this->client.println("<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /><style>input[type=text]{width: 60%;  padding: 12px 18px;  margin: 7px 0;  box-sizing: border-box; border: 3px solid #ccc;}</style>");
     this->client.println("</head><body><body style=\"background-color:#1E90FF;\"><center><p>Données de la nouvelle partition</p><br><br></center>");
     this->client.println("<form> <br><br> <label for=\"lname\">Tempo</label> <input type=\"text\" id=\"lname\" name=\"lname\"></form><br><br><br></body></html>");
-  
   }
 
   else if (choose_file == 1){
-    this->client.println("<!DOCTYPE html><html>");
-    this->client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><head>");
-    this->client.println("<body><label for=\"sheet\">Choose a .html file:</label>");
-    this->client.println("<input type=\"file\" id=\"sheet\" name=\"sheet\" accept=\".html\">");
-    this->client.println("<script>const sheet_ID = document.getElementById(\"sheet\");const sheet_URL = URL.createObjectURL(sheet_ID);</script>");
-    this->client.println("<p><a href=\"/OPEN\"><button class=\"button\">OPEN FILE</button></a></p>");
-    this->client.println("</body></html>");
+     this->client.println("<!DOCTYPE html><html>");
+     this->client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
+     this->client.println("<link rel=\"icon\" href=\"data:,\">");
+     this->client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
+     this->client.println(".button { background-color: #195B6A; border: none; color: white; padding: 16px 40px;");
+     this->client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
+     this->client.println(".button2 {background-color: #77878A;}</style></head>");
+     
+     this->client.println("<body><input type=\"file\" id=\"new_sheet\" multiple accept=\".html, .pdf\">"); // select a file
+     this->client.println("<div id = \"list_sheet\"> <p>No record selected</p> </div>");
+     
+
+     this->client.println("<iframe id = \"viewer\" width = \"1500\" height = \"1000\" ></iframe>"); // set display screen
+     
+     this->client.println("<script>const new_sheet = document.getElementById(\"new_sheet\"), list_sheet = document.getElementById(\"list_sheet\");");
+     
+     this->client.println("new_sheet.addEventListener(\"change\", handleFiles, false);");
+
+     this->client.println("function handleFiles() {");
+     this->client.println("if (!this.files.length) {list_sheet.innerHTML = \"<p>No record selected</p>\";} else {");
+     this->client.println("list_sheet.innerHTML = \"\";");
+     this->client.println("const list = document.createElement(\"ul\");");
+     this->client.println("list_sheet.appendChild(list);");
+     this->client.println("for (let i = 0; i < this.files.length; i++) {");
+     this->client.println("const li = document.createElement(\"li\");");
+     this->client.println("list.appendChild(li);");
+     this->client.println("const this_sheet = document.createElement(\"file\");");
+     this->client.println("const sheet_URL = URL.createObjectURL(this.files[i]);"); //create URL for the file selected before
+     this->client.println("const iframe = document.getElementById('viewer');");
+     this->client.println("iframe.setAttribute('src', sheet_URL);"); // display file
+     this->client.println("URL.revokeObjectURL(sheet_URL);"); // free URL
+     this->client.println("li.appendChild(this_sheet);}}}</script></body></html>");
+   
   }
   
 }
@@ -146,8 +171,10 @@ void App::Manage_Gpio(void){
   } else if (header.indexOf("GET /CHOOSE") >= 0) {
     Serial.println("Choose a file");
     choose_file = 1;
-  } else if (header.indexOf("GET /OPEN") >= 0) {
+    new_sheet = 0;
+  } else if (header.indexOf("GET /CHOOSE#") >= 0) {
     Serial.println("Open the file choosen");
+    open_file = 1;
   }
 }
   
