@@ -1,15 +1,6 @@
 #include "App.h"
 
-// Variable to store the HTTP request
-String header;
-
-// Auxiliar variables to store the current output state
-int new_sheet = 0;
-int choose_file = 0;
-int open_file = 0;
-
 App::App():server(80){}//constructor who initializes server http : port 80
-
 
 void App::Open_Wifi_Server(char* id, char* pw){
 
@@ -57,7 +48,7 @@ void App::Start_Client_Connection(void){
 }
 
 void App::Init_Server(void){
-  Open_Wifi_Server("iPhone de Arthur", "lemotdepasse");
+  Open_Wifi_Server("Livebox-5230_EXT", "vhzjwgx6SNTGQaJGRW");
   Connect_To_Wifi_Network();
   Start_Wifi_Server();
 }
@@ -76,9 +67,22 @@ void App::Close_Client_Connection(void){
  }
 }
 
+void App::Get_Tempo(void) {
+  index_tempo = header.indexOf("?") + 7;  // get the index of the first character of the tempo (?Tempo=..)
+  Serial.println("tempo = ");
+  while (header[index_tempo] != 'A') {    // get tempo value until we are on the next line (which start by 'A')
+    char_tempo += header[index_tempo];
+    index_tempo ++;
+  }
+  
+  tempo=atoi(char_tempo.c_str());          // convert string to int 
+  Serial.println(tempo);
+}
+
+
 void App::Html_Display(void){
 
-  if (choose_file==0 && new_sheet ==0) {
+  if (choose_file==0 && new_sheet ==0 && start_record ==0) {
     
       // Display the HTML web page
     this->client.println("<!DOCTYPE html><html>");
@@ -87,12 +91,13 @@ void App::Html_Display(void){
     // CSS to style the on/off buttons 
     // Feel free to change the background-color and font-size attributes to fit your preferences
     this->client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
-    this->client.println(".button { background-color: #195B6A; border: none; color: white; padding: 16px 40px;");
+    this->client.println(".button { background-color: #FDD017; border: none; color: white; padding: 16px 40px;");
     this->client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
-    this->client.println(".button2 {background-color: #77878A;}</style></head>");
+    this->client.println(".button2 {background-color: #FFFFFF; border: solid; color: black; padding: 16px 40px;");
+    this->client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}</head>");
     
     // Web Page Heading
-    this->client.println("<body><h1>ESP8266 Web Server</h1>");
+    this->client.println("<body><h1>Sheet Writer</h1>");
     
     // Display OPEN FILE button
     this->client.println("<p>Open a record</p>");    
@@ -103,13 +108,29 @@ void App::Html_Display(void){
     this->client.println("<p><a href=\"/NEW\"><button class=\"button\">START</button></a></p>");
   }
   
-  else if (new_sheet == 1) {   
+  else if (new_sheet == 1) {   // create a new record 
     this->client.println("<!DOCTYPE html><html>");
-    this->client.println("<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /><style>input[type=text]{width: 60%;  padding: 12px 18px;  margin: 7px 0;  box-sizing: border-box; border: 3px solid #ccc;}</style>");
-    this->client.println("<FONT size=\"6pt\"><center><p><U>Create a new sheet </p><br><br></center></head> </U></FONT>");
-    this->client.println("<body><body style=\"background-color:#1E90FF;\">");
-    this->client.println("<form><label for=\"lname\">Tempo :</label> <input type=\"text\" id=\"lname\" name=\"lname\"></form><br><br><br><br><br><br><br><br><br>");
-    this->client.println("<p>Start Recording<br><a href=\"/START RECORDING\"><button class=\"button\">START</button></a></p></body></html>");
+    this->client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
+    this->client.println(".button { background-color: #FDD017; border: none; color: white; padding: 16px 40px;");
+    this->client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
+    this->client.println(".button2 {background-color: #FFFFFF; border: solid; color: black; padding: 16px 40px;");
+    this->client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}</head>");
+    this->client.println("<body><h1>Create a new sheet</h1>");
+    this->client.println("<form><label for=\"Tempo\">Enter your tempo here and press \"enter\" touch on your keyboard :</label> <input type=\"text\" id=\"Tempo\" name=\"Tempo\"></form><br>"); // enter tempo
+    this->client.println("<p> Tempo chosen = " + char_tempo + "</p>"); 
+    this->client.println("<p>Start Recording<br><a href=\"/START \"><button class=\"button\">START</button></a></p></body></html>");
+    }
+
+  else if (start_record == 1) { // start the record and download it when finish
+    this->client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
+    this->client.println(".button { background-color: #FFE87C; border: none; color: white; padding: 16px 40px;");
+    this->client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
+    this->client.println(".button2 {background-color: #FFFFFF; border: solid; color: black; padding: 16px 40px;");
+    this->client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
+    this->client.println("body{background-color : #FFEBCD};}</head></style>");
+    this->client.println("<body><h1>mySheet</h1>");
+    this->client.println("<a href=\"http://" + WiFi.localIP().toString() + "/START\" download=\"mySheet\"><button class=\"button2\">DOWNLOAD</button></a></p></body></html>");
+    // download the 
   }
 
   else if (choose_file == 1){
@@ -121,11 +142,11 @@ void App::Html_Display(void){
      this->client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
      this->client.println(".button2 {background-color: #77878A;}</style></head>");
      
-     this->client.println("<body><input type=\"file\" id=\"new_sheet\" multiple accept=\".html, .pdf\">"); // select a file
+     this->client.println("<body><input type=\"file\" id=\"new_sheet\" multiple accept=\".html, .pdf\">");      // select a file
      this->client.println("<div id = \"list_sheet\"> <p>No record selected</p> </div>");
      
 
-     this->client.println("<iframe id = \"viewer\" width = \"1500\" height = \"1000\" ></iframe>"); // set display screen
+     this->client.println("<iframe id = \"viewer\" width = \"1500\" height = \"1000\" ></iframe>");             // set display screen
      
      this->client.println("<script>const new_sheet = document.getElementById(\"new_sheet\"), list_sheet = document.getElementById(\"list_sheet\");");
      
@@ -140,10 +161,10 @@ void App::Html_Display(void){
      this->client.println("const li = document.createElement(\"li\");");
      this->client.println("list.appendChild(li);");
      this->client.println("const this_sheet = document.createElement(\"file\");");
-     this->client.println("const sheet_URL = URL.createObjectURL(this.files[i]);"); //create URL for the file selected before
+     this->client.println("const sheet_URL = URL.createObjectURL(this.files[i]);");     //create URL for the file selected before
      this->client.println("const iframe = document.getElementById('viewer');");
-     this->client.println("iframe.setAttribute('src', sheet_URL);"); // display file
-     this->client.println("URL.revokeObjectURL(sheet_URL);"); // free URL
+     this->client.println("iframe.setAttribute('src', sheet_URL);");                    // display file
+     this->client.println("URL.revokeObjectURL(sheet_URL);");                           // free URL
      this->client.println("li.appendChild(this_sheet);}}}</script></body></html>");
    
   }
@@ -151,20 +172,24 @@ void App::Html_Display(void){
 }
 
 
-void App::Manage_Gpio(void){
+void App::Get_URL(void){
   
-  // turns the GPIOs on and off
   if (header.indexOf("GET /NEW") >= 0) {
     Serial.println("Create a new sheet");
     new_sheet = 1;
+    choose_file = 0;    
+  } else if (header.indexOf("?") >= 0) {      // get tempo value and put it in tempo_char -> we detect the "?" in the page URL : "?Tempo=.."
+    Get_Tempo();
+  }else if (header.indexOf("GET /START") >= 0) {
+    Serial.println("Start recording");
+    start_record = 1;
+    new_sheet = 0;
   } else if (header.indexOf("GET /CHOOSE") >= 0) {
     Serial.println("Choose a file");
     choose_file = 1;
     new_sheet = 0;
-  } else if (header.indexOf("GET /CHOOSE#") >= 0) {
-    Serial.println("Open the file choosen");
-    open_file = 1;
-  }
+  } 
+  
 }
   
 void App::Manage_App(void){
@@ -194,7 +219,7 @@ void App::Manage_App(void){
             client.println("Connection: close");
             client.println();
             
-            Manage_Gpio();
+            Get_URL();
 
             Html_Display();
          

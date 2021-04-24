@@ -2,12 +2,26 @@
 #include <ESP8266WiFi.h>
 
 class App{
+  
   private : 
   char *ssid;
   char *password;
   WiFiServer server;
   WiFiClient client;
   String currentLine = "";// make a String to hold incoming data from the client
+
+  // Variable to store the HTTP request
+  String header;
+
+  // Auxiliar variables to manage HTML display
+  int new_sheet = 0;
+  int start_record = 0;
+  int choose_file = 0;
+
+  // variable to get tempo value
+  int index_tempo = 0;
+  String char_tempo;
+  int tempo = 0;
 
 /**
    * @brief Create a wifi server
@@ -39,11 +53,20 @@ class App{
   void Html_Display(void);
 
  /**
-   * @brief Manage the gpio
+   * @brief Get tempo value and store it in "int tempo"
    * @param none
    * @return none
    */
-  void Manage_Gpio(void);
+  void Get_Tempo(void);
+   
+ /**
+   * @brief Update new_sheet/start_recording/choose_file values according to the URL
+   * @param none
+   * @return none
+   */
+  void Get_URL(void);
+
+
 
   public:
 
