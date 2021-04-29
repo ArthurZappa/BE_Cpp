@@ -36,7 +36,7 @@ void Micro::sampling(){
 
 }
 
-void Micro::FFT(){
+double Micro::FFT(){
       arduinoFFT FFT = arduinoFFT();
 
    /*FFT*/
@@ -46,16 +46,13 @@ void Micro::FFT(){
     double peak = FFT.MajorPeak(vReal, SAMPLES, SAMPLING_FREQUENCY); // calcul la fréquence dominante = fondamentale
  
     /*PRINT RESULTS*/
-    Serial.print("La fréquence est de : ");     //Print out what frequency is the most dominant.
-    Serial.println(peak);     //Print out what frequency is the most dominant.
-    if ((peak<445)&&(peak>438)){
-      Serial.println("C'est un LA 440");      
-    }
-    else if ((peak<405)&&(peak>400)){ Serial.println("C'est un SOL");    }
-    else if ((peak<300)&&(peak>287)){ Serial.println("C'est un RE");    }
-    else if ((peak<198)&&(peak>250)){ Serial.println("C'est un LA");    }
+    //Serial.print("La fréquence est de : ");     //Print out what frequency is the most dominant.
+    //Serial.println(peak);     //Print out what frequency is the most dominant.
+    
     
     delay(1000);
+
+    return peak;
 
 };
 

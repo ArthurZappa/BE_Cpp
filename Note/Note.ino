@@ -1,12 +1,13 @@
 #include "App.h"
 //#include "Screen.h"
-#include "Micro.h";
+#include "Micro.h"
+#include "Note.h"
 
 //App app;
 
 //Screen screen;
 Micro micro;
-
+Note note;
   
   
 void setup() {
@@ -25,7 +26,8 @@ void loop() {
   //app.Close_Client_Connection();
 
  micro.sampling();
- micro.FFT();
+ //micro.FFT();
+ note.recognize(micro.FFT());
  
  
   //screen.Display_All_Notes();

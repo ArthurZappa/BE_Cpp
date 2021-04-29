@@ -30,6 +30,6 @@ class Micro{
    * @return none
    */
   
-  void FFT(void);
+  double FFT(void);
   
 };
