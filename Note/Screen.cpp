@@ -35,3 +35,8 @@ void Screen::Display_All_Notes(void){
   Display_Note(0x53, 0x49); //display SI
   delay(delais);
 }
+
+void Screen::Recognize_Display(void) {
+  note.Recognize();
+  Display_Note(note.Get_Name(1), note.Get_Name(2));
+}

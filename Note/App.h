@@ -1,4 +1,8 @@
 // Load Wi-Fi library
+
+#ifndef APP_H
+#define APP_H
+
 #include <ESP8266WiFi.h>
 
 class App{
@@ -112,3 +116,5 @@ class App{
 
 
   };
+
+  #endif

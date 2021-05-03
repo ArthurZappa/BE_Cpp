@@ -1,11 +1,11 @@
 #include "App.h"
-//#include "Screen.h"
+#include "Screen.h"
 #include "Micro.h"
 #include "Note.h"
 
-//App app;
+App app;
 
-//Screen screen;
+Screen screen;
 Micro micro;
 Note note;
   
@@ -14,9 +14,8 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
   //app.Init_Server();
-  micro.pins_init();
-  //screen.Init_Screen();
-  
+  micro.Init_Micro();
+  screen.Init_Screen();
 }
 
 void loop() {
@@ -25,11 +24,9 @@ void loop() {
   //app.Manage_App();
   //app.Close_Client_Connection();
 
- micro.sampling();
- //micro.FFT();
- note.recognize(micro.FFT());
+  micro.Manage_Micro();
  
- 
-  //screen.Display_All_Notes();
+  screen.Recognize_Display(); // NE FONCTIONNE PAS --> on modifie la valeur de fondamental_frequency associé 
+                              // à cet objet micro mais on déclare un autre objet micro dans le fichier Note donc on ne récupère pas la bonne valeur de fondamental_frequency
      
 }

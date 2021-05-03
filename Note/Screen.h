@@ -1,6 +1,10 @@
+#ifndef SCREEN_H
+#define SCREEN_H
+
 #include <Wire.h>
 #include <Arduino.h>
 #include <U8g2lib.h>
+#include "Note.h"
   
 class Screen {
   
@@ -11,6 +15,8 @@ const uint8_t PIN_SCL = 4; //pin scl = D2 = GPIO4
 const uint8_t PIN_SDA = 5; //pin sda = D1 = GPIO5
 
 U8G2_SSD1306_128X32_UNIVISION_F_SW_I2C u8g2;
+
+Note note;
 
 public :
 
@@ -24,8 +30,7 @@ void Init_Screen(void);
 
 /**
    * @brief Display a note
-   * @param uint16_t Note1 : first character of the note
-   *        uint16_t Note2 : second character of the note
+   * @param none
    * @return none
    */
 void Display_Note(uint16_t Note1, uint16_t Note2);
@@ -38,4 +43,8 @@ void Display_Note(uint16_t Note1, uint16_t Note2);
 void Display_All_Notes(void);
 
 
+void Recognize_Display(void);
+
 };
+
+#endif

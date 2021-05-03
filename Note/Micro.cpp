@@ -8,12 +8,12 @@ double vReal[SAMPLES];
 double vImag[SAMPLES];
 
 
-void Micro::pins_init()
+void Micro::Init_Micro()
 {
   pinMode(this->PIN_MICRO, INPUT);
 }
 
-void Micro::sampling(){
+void Micro::Sampling(){
 
   unsigned long microseconds;
   
@@ -54,7 +54,17 @@ double Micro::FFT(){
 
     return peak;
 
-};
+}
+
+ void Micro::Manage_Micro(void) {
+  Sampling();
+  this->fondamental_frequency = FFT();
+  Serial.println(fondamental_frequency);
+ }
+
+ double Micro::Get_Fondamental(void) {
+  return this->fondamental_frequency;
+ }
 
  
    
