@@ -7,7 +7,7 @@ App app;
 
 Screen screen;
 Micro micro;
-Note note;
+//Note note;
   
   
 void setup() {

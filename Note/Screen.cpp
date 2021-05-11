@@ -38,5 +38,5 @@ void Screen::Display_All_Notes(void){
 
 void Screen::Recognize_Display(void) {
   note.Recognize();
-  Display_Note(note.Get_Name(1), note.Get_Name(2));
+  Display_Note(note.Get_Name(0), note.Get_Name(1));
 }

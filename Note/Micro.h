@@ -8,7 +8,7 @@ class Micro{
   private :
 
   const uint8_t PIN_MICRO = A0;
-  double fondamental_frequency = 0;
+  static double fondamental_frequency;
 
 
   /**

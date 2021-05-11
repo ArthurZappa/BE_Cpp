@@ -7,6 +7,7 @@
 double vReal[SAMPLES];
 double vImag[SAMPLES];
 
+double Micro::fondamental_frequency = 0;
 
 void Micro::Init_Micro()
 {
