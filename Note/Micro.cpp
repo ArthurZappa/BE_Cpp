@@ -1,37 +1,40 @@
 #include "Micro.h"
 
 
-#define SAMPLES 128             //Must be a power of 2
+#define SAMPLES 256             //Must be a power of 2
 #define SAMPLING_FREQUENCY 9000 //Hz, must be less than 10000 due to ADC 10 bits
   
-double vReal[SAMPLES];
-double vImag[SAMPLES];
+#define THRESHOLD 200           //amplitude threshold
+
+#define PIN_MICRO A0
+
+Micro::Micro() {
+  vReal = new double[SAMPLES];
+  vImag = new double[SAMPLES];
+  FFT_delay = SAMPLES *1000/SAMPLING_FREQUENCY;
+}
+
 
 double Micro::fondamental_frequency = 0;
 
 void Micro::Init_Micro()
 {
-  pinMode(this->PIN_MICRO, INPUT);
+  pinMode(PIN_MICRO, INPUT);
 }
 
 void Micro::Sampling(){
 
   unsigned long microseconds;
   
-  
   const int sampling_period_us = round(1000000*(1.0/SAMPLING_FREQUENCY));
       
-   for(int i=0; i<SAMPLES; i++)
-    {
-      
-      
+   for(int i=0; i<SAMPLES; i++){
         microseconds = micros(); // renvoie le temps passé depuis l'execution du programme   //Overflows after around 70 minutes!
      
-        vReal[i] = analogRead(this->PIN_MICRO);
+        vReal[i] = analogRead(PIN_MICRO);
         vImag[i] = 0;
      
-       while(micros() < (microseconds + sampling_period_us)){//on attend la fin d'un echantillonnage
-        }
+       while(micros() < (microseconds + sampling_period_us)){}//on attend la fin d'un echantillonnage 
     }
 
 
@@ -51,20 +54,27 @@ double Micro::FFT(){
     //Serial.println(peak);     //Print out what frequency is the most dominant.
     
     
-    delay(1000);
+    //delay(1000);
 
     return peak;
 
 }
 
  void Micro::Manage_Micro(void) {
-  Sampling();
-  this->fondamental_frequency = FFT();
-  Serial.println(fondamental_frequency);
+  //if (analogRead(PIN_MICRO) > THRESHOLD) {
+    Sampling();
+    this->fondamental_frequency = FFT();
+    //Serial.println(fondamental_frequency);
+  //} 
+  //else {fondamental_frequency = 0;}
  }
 
  double Micro::Get_Fondamental(void) {
   return this->fondamental_frequency;
+ }
+
+ float Micro::Get_Delay(void) {
+  return this->FFT_delay;
  }
 
  

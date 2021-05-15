@@ -7,9 +7,12 @@ class Micro{
 
   private :
 
-  const uint8_t PIN_MICRO = A0;
   static double fondamental_frequency;
+  
+  double * vReal;
+  double * vImag;
 
+  float FFT_delay; //time requires to sample and do the FFT in milliseconds
 
   /**
    * @brief make the sampling
@@ -29,6 +32,7 @@ class Micro{
 
   public :
 
+  Micro(void);
   /**
    * @brief init the pins for the mic on A0
    * @param none
@@ -47,6 +51,7 @@ class Micro{
   void Manage_Micro(void);
 
   double Get_Fondamental(void);
+  float Get_Delay(void);
 };
 
 #endif

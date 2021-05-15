@@ -2,12 +2,16 @@
 #include "Screen.h"
 #include "Micro.h"
 #include "Note.h"
+#include "Sheet.h"
+
 
 App app;
 
 Screen screen;
 Micro micro;
+Sheet sheet;
 //Note note;
+
   
   
 void setup() {
@@ -23,10 +27,14 @@ void loop() {
   //app.Start_Client_Connection();
   //app.Manage_App();
   //app.Close_Client_Connection();
-
+  
+while (analogRead(A0) < 250) {
+  //do nothing --> wait until we detect the first note so that the software is coordinate with the user
+}
   micro.Manage_Micro();
  
-  screen.Recognize_Display(); // NE FONCTIONNE PAS --> on modifie la valeur de fondamental_frequency associé 
-                              // à cet objet micro mais on déclare un autre objet micro dans le fichier Note donc on ne récupère pas la bonne valeur de fondamental_frequency
-     
+  screen.Recognize_Display(); 
+  sheet.Recognize_Duration();
+
+  //delay(500);
 }

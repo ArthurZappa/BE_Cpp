@@ -27,6 +27,14 @@ class App{
   String char_tempo;
   int tempo = 0;
 
+
+  // Current time
+  unsigned long currentTime = millis();
+  // Previous time
+  unsigned long previousTime = 0; 
+  // Define timeout time in milliseconds (example: 2000ms = 2s)
+  const long timeoutTime = 2000;
+
 /**
    * @brief Create a wifi server
    * @param char* id: network name
@@ -61,25 +69,19 @@ class App{
    * @param none
    * @return none
    */
-  void Get_Tempo(void);
+  void Set_Tempo(void);
    
  /**
    * @brief Update new_sheet/start_recording/choose_file values according to the URL
    * @param none
    * @return none
    */
-  void Get_URL(void);
+  void Manage_URL(void);
 
 
 
   public:
 
-  // Current time
-  unsigned long currentTime = millis();
-  // Previous time
-  unsigned long previousTime = 0; 
-  // Define timeout time in milliseconds (example: 2000ms = 2s)
-  const long timeoutTime = 2000;
 
   App();
   
@@ -113,6 +115,8 @@ class App{
    */
   void Manage_App(void);
 
+  int Get_Tempo(void);
+  
 
 
   };

@@ -1,6 +1,10 @@
 #include "App.h"
 
-App::App():server(80){}//constructor who initializes server http : port 80
+#define WIFI_LOG "AmelieS6"
+#define PASSWORD "amelie99"
+
+App::App():server(80){
+  tempo = 85;} //constructor who initializes server http : port 80
 
 void App::Open_Wifi_Server(char* id, char* pw){
 
@@ -9,7 +13,6 @@ void App::Open_Wifi_Server(char* id, char* pw){
   Serial.println(this->ssid);
   this->password = pw;
 }
-
 
 void App::Connect_To_Wifi_Network(void){
 
@@ -48,7 +51,7 @@ void App::Start_Client_Connection(void){
 }
 
 void App::Init_Server(void){
-  Open_Wifi_Server("Amélies6", "amelie99");
+  Open_Wifi_Server(WIFI_LOG, PASSWORD);
   Connect_To_Wifi_Network();
   Start_Wifi_Server();
 }
@@ -67,7 +70,7 @@ void App::Close_Client_Connection(void){
  }
 }
 
-void App::Get_Tempo(void) {
+void App::Set_Tempo(void) {
   index_tempo = header.indexOf("?") + 7;  // get the index of the first character of the tempo (?Tempo=..)
   Serial.println("tempo = ");
   while (header[index_tempo] != 'A') {    // get tempo value until we are on the next line (which start by 'A')
@@ -122,15 +125,21 @@ void App::Html_Display(void){
     }
 
   else if (this->start_record == 1) { // start the record and download it when finish
-    this->client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
-    this->client.println(".button { background-color: #FFE87C; border: none; color: white; padding: 16px 40px;");
-    this->client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
-    this->client.println(".button2 {background-color: #FFFFFF; border: solid; color: black; padding: 16px 40px;");
-    this->client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
-    this->client.println("body{background-color : #FFEBCD};}</head></style>");
-    this->client.println("<body><h1>mySheet</h1>");
-    this->client.println("<a href=\"http://" + WiFi.localIP().toString() + "/START\" download=\"mySheet\"><button class=\"button2\">DOWNLOAD</button></a></p></body></html>");
-  }
+    String i = "a";
+    while(i != "b") {
+        this->client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
+        this->client.println(".button { background-color: #FFE87C; border: none; color: white; padding: 16px 40px;");
+        this->client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
+        this->client.println(".button2 {background-color: #FFFFFF; border: solid; color: black; padding: 16px 40px;");
+        this->client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
+        this->client.println("body{background-color : #FFEBCD};}</head></style>");
+        this->client.println("<body><h1>mySheet" + i + "</h1>");
+        this->client.println("<a href=\"http://" + WiFi.localIP().toString() + "/START\" download=\"mySheet\"><button class=\"button2\">DOWNLOAD</button></a></p></body></html>");
+    delay(5000);
+    i = "p";
+    }
+    
+    }
 
   else if (this->choose_file == 1){
      this->client.println("<!DOCTYPE html><html>");
@@ -171,14 +180,14 @@ void App::Html_Display(void){
 }
 
 
-void App::Get_URL(void){
+void App::Manage_URL(void){
   
   if (header.indexOf("GET /NEW") >= 0) {
     Serial.println("Create a new sheet");
     this->new_sheet = 1;
     this->choose_file = 0;    
   } else if (header.indexOf("?") >= 0) {      // get tempo value and put it in tempo_char -> we detect the "?" in the page URL : "?Tempo=.."
-    Get_Tempo();
+    Set_Tempo();
   } else if (header.indexOf("GET /START") >= 0) {
     Serial.println("Start recording");
     this->start_record = 1;
@@ -218,7 +227,7 @@ void App::Manage_App(void){
             client.println("Connection: close");
             client.println();
             
-            Get_URL();
+            Manage_URL();
 
             Html_Display();
          
@@ -233,6 +242,9 @@ void App::Manage_App(void){
       }
     }
   }
-
   
+}
+
+int App::Get_Tempo() {
+  return this->tempo;
 }
