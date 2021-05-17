@@ -7,7 +7,7 @@ class Micro{
 
   private :
 
-  static double fondamental_frequency;
+  double fondamental_frequency;
   
   double * vReal;
   double * vImag;

@@ -4,10 +4,13 @@
 #define APP_H
 
 #include <ESP8266WiFi.h>
+#include "Sheet.h"
 
 class App{
   
   private : 
+  
+  Sheet sheet;
   char *ssid;
   char *password;
   WiFiServer server;
@@ -113,7 +116,7 @@ class App{
    * @param none
    * @return none
    */
-  void Manage_App(void);
+  void Manage_App(uint16_t note_name, char note_durat);
 
   int Get_Tempo(void);
   

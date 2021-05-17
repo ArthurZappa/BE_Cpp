@@ -12,10 +12,9 @@ Micro::Micro() {
   vReal = new double[SAMPLES];
   vImag = new double[SAMPLES];
   FFT_delay = SAMPLES *1000/SAMPLING_FREQUENCY;
+  fondamental_frequency = 0;
 }
 
-
-double Micro::fondamental_frequency = 0;
 
 void Micro::Init_Micro()
 {

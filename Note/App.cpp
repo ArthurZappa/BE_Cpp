@@ -4,7 +4,8 @@
 #define PASSWORD "amelie99"
 
 App::App():server(80){
-  tempo = 85;} //constructor who initializes server http : port 80
+  tempo = 0;
+} //constructor who initializes server http : port 80
 
 void App::Open_Wifi_Server(char* id, char* pw){
 
@@ -125,20 +126,14 @@ void App::Html_Display(void){
     }
 
   else if (this->start_record == 1) { // start the record and download it when finish
-    String i = "a";
-    while(i != "b") {
-        this->client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
-        this->client.println(".button { background-color: #FFE87C; border: none; color: white; padding: 16px 40px;");
-        this->client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
-        this->client.println(".button2 {background-color: #FFFFFF; border: solid; color: black; padding: 16px 40px;");
-        this->client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
-        this->client.println("body{background-color : #FFEBCD};}</head></style>");
-        this->client.println("<body><h1>mySheet" + i + "</h1>");
-        this->client.println("<a href=\"http://" + WiFi.localIP().toString() + "/START\" download=\"mySheet\"><button class=\"button2\">DOWNLOAD</button></a></p></body></html>");
-    delay(5000);
-    i = "p";
-    }
-    
+    this->client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
+    this->client.println(".button { background-color: #FFE87C; border: none; color: white; padding: 16px 40px;");
+    this->client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
+    this->client.println(".button2 {background-color: #FFFFFF; border: solid; color: black; padding: 16px 40px;");
+    this->client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
+    this->client.println("body{background-color : #FFEBCD};}</head></style>");
+    this->client.println("<body><h1>mySheet</h1>");
+    this->client.println("<a href=\"http://" + WiFi.localIP().toString() + "/START\" download=\"mySheet\"><button class=\"button2\">DOWNLOAD</button></a></p></body></html>");
     }
 
   else if (this->choose_file == 1){
@@ -200,8 +195,12 @@ void App::Manage_URL(void){
   
 }
   
-void App::Manage_App(void){
+void App::Manage_App(uint16_t note_name, char note_durat){
 
+   //note.Recognize_Name();
+   //note.Recognize_Duration();
+
+   
    if (client) {    
 
      while (client.connected() && currentTime - previousTime <= timeoutTime) { // loop while the client's connected

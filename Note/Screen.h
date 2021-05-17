@@ -43,7 +43,7 @@ void Display_Note(uint16_t Note1, uint16_t Note2);
 void Display_All_Notes(void);
 
 
-void Recognize_Display(void);
+void Display(void);
 
 };
 

@@ -36,7 +36,6 @@ void Screen::Display_All_Notes(void){
   delay(delais);
 }
 
-void Screen::Recognize_Display(void) {
-  note.Recognize();
+void Screen::Display(void) {
   Display_Note(note.Get_Name(0), note.Get_Name(1));
 }
