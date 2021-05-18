@@ -26,10 +26,11 @@ class App{
   int choose_file = 0;
 
   // variable to get tempo value
-  int index_tempo = 0;
+  int index_tempo;
   String char_tempo;
-  int tempo = 0;
-
+  int tempo;
+  float time_duration;           // duration of a time calculate with the tempo set by the client in the app in milliseconds
+  String time_measure;
 
   // Current time
   unsigned long currentTime = millis();
@@ -38,6 +39,9 @@ class App{
   // Define timeout time in milliseconds (example: 2000ms = 2s)
   const long timeoutTime = 2000;
 
+
+  bool beginning; // used to check if we are at the beginning of a measure because the display is different
+  int cnt_tamp;
 /**
    * @brief Create a wifi server
    * @param char* id: network name
@@ -116,9 +120,11 @@ class App{
    * @param none
    * @return none
    */
-  void Manage_App(uint16_t note_name, char note_durat);
+  void Manage_App(void);
 
   int Get_Tempo(void);
+
+  float Get_Time_Duration(void);
   
 
 

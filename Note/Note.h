@@ -4,20 +4,24 @@
 #include <Arduino.h>
 #include <U8g2lib.h>
 #include "Micro.h"
-#include "App.h"
+
 
 class Note{
 
 private :
 
-  static uint16_t * name;
-  bool is_note; // true if a note is detected, false if not
-
   Micro micro;
-  App app;
-  float time_duration;  // duration of a time calculate with the tempo set by the client in the app in milliseconds
-  char note_duration;   //'n' = none ; '4' = quarter note (1 time) ; '8' = eight note (1/2 time)
-  //bool note_already_detected;
+
+  
+  static uint16_t* note_name;
+  static String note_duration;   //'n' = none ; '4' = quarter note (1 time) ; '8' = eight note (1/2 time)
+  static int cnt_note ;          // counter incremented every half time
+
+  bool is_note;                  // true if a note is detected, false if not
+ 
+  
+  
+  bool note_already_detected;
  
 
 /**
@@ -26,7 +30,7 @@ private :
    *        
    * @return none
    */
-void Note_Detected(void);
+void Note_Detected(float time_duration);
 
 public:
 
@@ -38,27 +42,23 @@ Note();
    *        
    * @return none
    */
-void Recognize_Name(void);
+void Recognize_Name(float time_duration);
 
 /**
    * @brief Recognize the duration of the note (quarter or eight note)
-   * @param none
+   * @param Duration of one time, calculate with the value of tempo in App
    * @return none
    */
-void Recognize_Duration(void);
+void Recognize_Duration(float time_duration);
 
-/**
-   * @brief Getter of the value of is_note -> true if a note is detected, else if not
-   * @param none
-   * @return bool is_note
-   */
-bool Is_Note(void);
+
 
 
 uint16_t Get_Name(int i);
 
-char Get_Duration(void);
+String Get_Duration(void);
 
+int Get_Cnt(void);
 
 
   
