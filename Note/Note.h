@@ -14,12 +14,16 @@ private :
 
   
   static uint16_t* note_name;
-  static String note_duration;   //'n' = none ; '4' = quarter note (1 time) ; '8' = eight note (1/2 time)
+  static String note_duration;   // 'n' = none ; '4' = quarter note (1 time) ; '8' = eight note (1/2 time)
   static int cnt_note ;          // counter incremented every half time
 
   bool is_note;                  // true if a note is detected, false if not
- 
-  
+
+
+  // time management for multi-threading
+  uint16_t previous_millis_name;
+  uint16_t previous_millis_duration;
+  uint16_t current_millis;
   
   bool note_already_detected;
  
@@ -60,8 +64,9 @@ String Get_Duration(void);
 
 int Get_Cnt(void);
 
+class Too_High{};
+class Too_Low{};  
 
-  
 };
 
 #endif

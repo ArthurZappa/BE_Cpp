@@ -1,7 +1,7 @@
 #include "App.h"
 
-#define WIFI_LOG "iPhone de Arthur"
-#define PASSWORD "lemotdepasse"
+#define WIFI_LOG "Emmintal"
+#define PASSWORD "hZrW4uMY63dmSvR4cU"
 
 
 
@@ -90,7 +90,7 @@ void App::Set_Tempo(void) {
   tempo = atoi(char_tempo.c_str());        // convert string to int
 
   time_duration = 60*1000/tempo;
-  time_measure = String(time_duration*4/1000);
+  time_measure = String(time_duration*8/1000);
   Serial.println(tempo);
   Serial.println(time_measure);
 }
@@ -139,7 +139,7 @@ void App::Html_Display(void) {
 
   else if (this->start_record == 1) { // start the record and download it when finish
 
-
+    //<meta http-equiv=\"refresh\" content="+ time_measure +">
     // Display of the SHEET MUSIC
     this->client.println("<!DOCTYPE html><html>");
     this->client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}</style><b>THE SHEET MUSIC</b>");
@@ -148,90 +148,59 @@ void App::Html_Display(void) {
     this->client.println("var renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);renderer.resize(800,800)");//800 800 size of the sheet
     this->client.println("var context = renderer.getContext();context.setFont(\"Arial\", 10, \"\").setBackgroundFillStyle(\"#eed\")");
     this->client.println("var stave1 = new VF.Stave(0, 0, 500)");// Create a stave at position 0, 0 of width 400 on the canvas
-    this->client.println("stave1.addClef(\"treble\").addTimeSignature(\"4/4\");stave1.setContext(context).draw();</script>");// add features like timesignature and clef
+    this->client.println("var stave2 = new VF.Stave(0, 80, 500)");
+    this->client.println("var stave3 = new VF.Stave(0, 160, 500)");
+    this->client.println("var stave4 = new VF.Stave(0, 240, 500)");
+    this->client.println("stave1.addClef(\"treble\").addTimeSignature(\"4/4\");stave1.setContext(context).draw();");// add features like timesignature and clef
+   // this->client.println("stave3.addClef(\"treble\").addTimeSignature(\"4/4\");stave3.setContext(context).draw();");
+   // this->client.println("stave4.addClef(\"treble\").addTimeSignature(\"4/4\");stave4.setContext(context).draw();");
+    this->client.println("stave2.addClef(\"treble\").addTimeSignature(\"4/4\");stave2.setContext(context).draw();</script>");// add features like timesignature and clef
+    
+    if (measure_name.size() == 8) {
+      this->client.println("<meta http-equiv=\"refresh\" content="+ time_measure +">");
+      this->client.println("<script>var notesMeasure1 = [");
 
-    // if ((Note::cpt_note%4)==0){
-
-    this->client.println("<script>var notesMeasure1 = [");
-   
-   
-   
-    for (int i=0 ; i<8 ; i++){
-     // if (cnt_tamp != sheet.note.Get_Cnt()){ // to be sure that we get values of tabs at every half-time
-        //if (sheet.Get_Tab_Name(i)!= "") {
-          if (beginning){ // if this is the first note of the measure, we don't start by a quote
-             this->client.println("new VF.StaveNote({clef: \"treble\", keys: [\""+sheet.Get_Tab_Name(i)+"\"], duration: \""+sheet.Get_Tab_Duration(i)+"\" })");
-             beginning = false;
-             Serial.println(sheet.Get_Tab_Duration(i) + " " + sheet.Get_Tab_Name(i));
-          }
-          else {
-             this->client.println(", new VF.StaveNote({clef: \"treble\", keys: [\""+sheet.Get_Tab_Name(i)+"\"], duration: \""+sheet.Get_Tab_Duration(i)+"\" })");
-             Serial.println(sheet.Get_Tab_Duration(i) + " " + sheet.Get_Tab_Name(i));
-          }
-       // }
-        //cnt_tamp = sheet.note.Get_Cnt();
-      //}
+      for (int i=0 ; i<4 ; i++){
+        if (beginning){ // if this is the first note of the measure, we don't start by a quote
+           this->client.println("new VF.StaveNote({clef: \"treble\", keys: [\""+measure_name[i]+"\"], duration: \""+measure_duration[i]+"\" })");
+           beginning = false;
+           Serial.println(measure_name[i] + " " + measure_duration[i]);
+        }
+        else {
+           this->client.println(", new VF.StaveNote({clef: \"treble\", keys: [\""+measure_name[i]+"\"], duration: \""+measure_duration[i]+"\" })");
+           Serial.println(measure_name[i] + " " + measure_duration[i]);
+        }
+      }
+      beginning = true;
+      this->client.println("];");
+      this->client.println("var voice = new VF.Voice({num_beats: 4,  beat_value: 4});voice.addTickables(notesMeasure1);");   // add a voice with all the notes created
+      this->client.println("var formatter = new VF.Formatter().joinVoices([voice]).format([voice], 450);");                  // format the voice for the sheet music
+      this->client.println("voice.draw(context, stave1);stave1.setContext(context).draw();</script>");                        // draw the voice on the sheet music
+      
+      this->client.println("<script>var notesMeasure2 = [");
+     
+     
+      for (int i=4 ; i<8 ; i++){
+        if (beginning){ // if this is the first note of the measure, we don't start by a quote
+           this->client.println("new VF.StaveNote({clef: \"treble\", keys: [\""+measure_name[i]+"\"], duration: \""+measure_duration[i]+"\" })");
+           beginning = false;
+           Serial.println(measure_name[i] + " " + measure_duration[i]);
+        }
+        else {
+           this->client.println(", new VF.StaveNote({clef: \"treble\", keys: [\""+measure_name[i]+"\"], duration: \""+measure_duration[i]+"\" })");
+           Serial.println(measure_name[i] + " " + measure_duration[i]);
+        }
+      }
+      beginning = true;
+      this->client.println("];");
+      this->client.println("var voice2 = new VF.Voice({num_beats: 4,  beat_value: 4});voice2.addTickables(notesMeasure2);");   // add a voice with all the notes created
+      this->client.println("var formatter = new VF.Formatter().joinVoices([voice2]).format([voice2], 450);");                  // format the voice for the sheet music
+      this->client.println("voice2.draw(context, stave2);stave2.setContext(context).draw();</script>");                        // draw the voice on the sheet music
     }
-    beginning = true;
-    this->client.println("];");
-    this->client.println("var voice = new VF.Voice({num_beats: 4,  beat_value: 4});voice.addTickables(notesMeasure1);");   // add a voice with all the notes created
-    this->client.println("var formatter = new VF.Formatter().joinVoices([voice]).format([voice], 450);");                  // format the voice for the sheet music
-    this->client.println("voice.draw(context, stave1);stave1.setContext(context).draw();</script>");                        // draw the voice on the sheet music
-
-    /*
-      if (Note::cpt_note>12){
-      this->client.println("<script>var stave2 = new Vex.Flow.Stave(stave1.width + stave1.x,0,400); stave2.setContext(context).draw();");
-      this->client.println("var notesMeasure2 = [ new Vex.Flow.StaveNote({ keys: [\"c/4\"], duration: \"q\" }),new Vex.Flow.StaveNote({ keys: [\"d/4\"], duration: \"q\" }),");
-      this->client.println("new Vex.Flow.StaveNote({ keys: [\"b/4\"], duration: \"qr\" }), new Vex.Flow.StaveNote({ keys: [\"c/4\", \"e/4\", \"g/\4\"], duration: \"q\" }),];");
-      this->client.println("var voice2 = new VF.Voice({num_beats: 4,  beat_value: 4});voice2.addTickables(notesMeasure2);");
-      this->client.println("var formatter = new VF.Formatter().joinVoices([voice2]).format([voice2], 400);voice2.draw(context, stave2);stave2.setContext(context).draw();</script>");
-      }
-      ///////////////// mettre cptnote en private
-      if (Note::cpt_note>22){
-      this->client.println("<script>var stave3 = new VF.Stave(0, 90, 400)");// Create a stave at position 10, 40 of width 400 on the canvas
-      this->client.println("stave3.addClef(\"treble\").addTimeSignature(\"4/4\");stave3.setContext(context).draw();</script>");// add features like timesignature and clef
-      this->client.println("<script>var notesMeasure3 = [  new VF.StaveNote({clef: \"treble\", keys: [\"c/4\"], duration: \"q\" }),");  //create a tab of note and add a C
-      this->client.println("new VF.StaveNote({clef: \"treble\", keys: [\"d/4\"], duration: \"q\" }),  new VF.StaveNote({clef: \"treble\", keys: [\"b/4\"], duration: \"qr\" }),"); // addtwo notes
-      this->client.println(" new VF.StaveNote({clef: \"treble\", keys: [\"c/4\", \"e/4\", \"g/4\"], duration: \"q\" })];");
-      this->client.println("var voice3 = new VF.Voice({num_beats: 4,  beat_value: 4});voice3.addTickables(notesMeasure3);"); // add a voice with all the notes created
-      this->client.println("var formatter = new VF.Formatter().joinVoices([voice3]).format([voice3], 400);"); // format the voice for the sheet music
-      this->client.println("voice3.draw(context, stave3);stave3.setContext(context).draw()</script>"); // draw the voice on the sheet music
-
-      }
-
-      if (Note::cpt_note>30){
-      this->client.println("<script>var stave4 = new Vex.Flow.Stave(stave3.width + stave3.x,90,400); stave4.setContext(context).draw();");
-      this->client.println("var notesMeasure4 = [ new Vex.Flow.StaveNote({ keys: [\"c/4\"], duration: \"q\" }),new Vex.Flow.StaveNote({ keys: [\"d/4\"], duration: \"q\" }),");
-      this->client.println("new Vex.Flow.StaveNote({ keys: [\"b/4\"], duration: \"qr\" }), new Vex.Flow.StaveNote({ keys: [\"c/4\", \"e/4\", \"g/\4\"], duration: \"q\" }),];");
-      this->client.println("var voice4 = new VF.Voice({num_beats: 4,  beat_value: 4});voice4.addTickables(notesMeasure4);");
-      this->client.println("var formatter = new VF.Formatter().joinVoices([voice4]).format([voice4], 400);voice4.draw(context, stave4);stave4.setContext(context).draw();</script>");
-      }
-
-
-      if (Note::cpt_note>39){
-      this->client.println("<script>var stave5 = new VF.Stave(0, 180, 400)");// Create a stave at position 10, 40 of width 400 on the canvas
-      this->client.println("stave5.addClef(\"treble\").addTimeSignature(\"4/4\");stave5.setContext(context).draw();</script>");// add features like timesignature and clef
-      this->client.println("<script>var notesMeasure5 = [  new VF.StaveNote({clef: \"treble\", keys: [\"c/4\"], duration: \"q\" }),");  //create a tab of note and add a C
-      this->client.println("new VF.StaveNote({clef: \"treble\", keys: [\"d/4\"], duration: \"q\" }),  new VF.StaveNote({clef: \"treble\", keys: [\"b/4\"], duration: \"qr\" }),"); // addtwo notes
-      this->client.println(" new VF.StaveNote({clef: \"treble\", keys: [\"c/4\", \"e/4\", \"g/4\"], duration: \"q\" })];");
-      this->client.println("var voice5 = new VF.Voice({num_beats: 4,  beat_value: 4});voice5.addTickables(notesMeasure5);"); // add a voice with all the notes created
-      this->client.println("var formatter = new VF.Formatter().joinVoices([voice5]).format([voice5], 400);"); // format the voice for the sheet music
-      this->client.println("voice5.draw(context, stave5);stave5.setContext(context).draw()</script>"); // draw the voice on the sheet music
-
-      }
-
-      if (Note::cpt_note>48){
-      this->client.println("<script>var stave6 = new Vex.Flow.Stave(stave5.width + stave5.x,180,400); stave6.setContext(context).draw();");
-      this->client.println("var notesMeasure6 = [ new Vex.Flow.StaveNote({ keys: [\"c/4\"], duration: \"q\" }),new Vex.Flow.StaveNote({ keys: [\"d/4\"], duration: \"q\" }),");
-      this->client.println("new Vex.Flow.StaveNote({ keys: [\"b/4\"], duration: \"qr\" }), new Vex.Flow.StaveNote({ keys: [\"c/4\", \"e/4\", \"g/\4\"], duration: \"q\" }),];");
-      this->client.println("var voice6 = new VF.Voice({num_beats: 4,  beat_value: 4});voice6.addTickables(notesMeasure4);");
-      this->client.println("var formatter = new VF.Formatter().joinVoices([voice6]).format([voice6], 400);voice6.draw(context, stave4);stave6.setContext(context).draw();</script>");
-      }
-
-    */
+  
 
     //Display of the button DOWNLOAD
-    this->client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
+    this->client.println("<head><style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
     this->client.println(".button { background-color: #FFE87C; border: none; color: white; padding: 16px 40px;");
     this->client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
     this->client.println(".button2 {background-color: #FFFFFF; border: solid; color: black; padding: 16px 40px;");
@@ -313,7 +282,7 @@ void App::Manage_App(void) {
       if (client.available()) {             // if there's bytes to read from the client,
 
         char c = client.read();             // read a byte, then
-       // Serial.write(c);                    // print it out the serial monitor
+       // Serial.write(c);                  // print it out the serial monitor
         header += c;
 
         if (c == '\n') {                    // if the byte is a newline character
@@ -330,6 +299,10 @@ void App::Manage_App(void) {
            // client.println("Connection: close");
            // client.println();
 
+
+            measure_name = sheet.Get_Tab_Name();
+            measure_duration = sheet.Get_Tab_Duration();
+        
             Manage_URL();
 
             Html_Display();

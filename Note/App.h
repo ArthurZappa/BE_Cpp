@@ -4,11 +4,17 @@
 #define APP_H
 
 #include <ESP8266WiFi.h>
+
 #include "Sheet.h"
+
 
 class App{
   
   private : 
+
+  vector<String> measure_name;
+  vector<String> measure_duration;
+
   
   Sheet sheet;
   char *ssid;
@@ -125,8 +131,6 @@ class App{
   int Get_Tempo(void);
 
   float Get_Time_Duration(void);
-  
-
 
   };
 

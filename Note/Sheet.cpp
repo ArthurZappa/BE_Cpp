@@ -1,52 +1,47 @@
 #include "Sheet.h"
 
-String * Sheet::tab_duration = new String[8];
-String * Sheet::tab_name = new String[8];
+vector<String> Sheet::tab_name;
+vector<String> Sheet::tab_duration;
 
 Sheet::Sheet(){
-   for (int i =0; i<8;i++){
-        tab_name[i]="";
-        tab_duration[i]="";
-   }
-  cnt_tamp=0;
+   previous_millis = 0;
+   current_millis = 0;
+  //cnt_temp=0;
 }
 
 
-void Sheet::Construct_Measure(void){
-
-  if (cnt_tamp != note.Get_Cnt()){    // every half time (if note_cnt was incremented)
+void Sheet::Construct_Measure(uint16_t time_duration){
+  
+  current_millis = millis();
+  if (current_millis - previous_millis >= (time_duration/2) ) {
+    previous_millis = current_millis;
     
-    if (note.Get_Cnt()%8 == 0){       // if we start a new measure, we re initialize tabs
-      for (int i =0; i<8;i++){
-        Serial.println(tab_name[i] + "  "+tab_duration[i]);
-        tab_name[i]="";
-        tab_duration[i]="";
-      }      
+    if (note.Get_Cnt()%8 == 0){       // if we start a new measure, we re initialize temporary tabs and we copy them in the definitive tabs (used in App)
+      tab_name = tab_name_temp;
+      tab_duration = tab_duration_temp;
+      tab_name_temp.clear();
+      tab_duration_temp.clear();
+      Serial.println(tab_name.size());
     }
     if (note.Get_Duration() != "n") {  // we check if there is a note during this half time and we fill tabs with the right value
-      if (note.Get_Name(0)==67) tab_name[note.Get_Cnt()%8] = "c/4"; // conversion from int (needed for the screen) to string (needed for the application)
-      else if (note.Get_Name(0)==68) tab_name[note.Get_Cnt()%8] = "d/4";
-      else if (note.Get_Name(0)==69) tab_name[note.Get_Cnt()%8] = "e/4";
-      else if (note.Get_Name(0)==70) tab_name[note.Get_Cnt()%8] = "f/4";
-      else if (note.Get_Name(0)==71) tab_name[note.Get_Cnt()%8] = "g/4";
-      else if (note.Get_Name(0)==65) tab_name[note.Get_Cnt()%8] = "a/4";
-      else if (note.Get_Name(0)==66) tab_name[note.Get_Cnt()%8] = "b/4";
+      if (note.Get_Name(0)==67) tab_name_temp.push_back("c/4"); // conversion from int (needed for the screen) to string (needed for the application)
+      else if (note.Get_Name(0)==68) tab_name_temp.push_back("d/4");
+      else if (note.Get_Name(0)==69) tab_name_temp.push_back("e/4");
+      else if (note.Get_Name(0)==70) tab_name_temp.push_back("f/4");
+      else if (note.Get_Name(0)==71) tab_name_temp.push_back("g/4");
+      else if (note.Get_Name(0)==65) tab_name_temp.push_back("a/4");
+      else if (note.Get_Name(0)==66) tab_name_temp.push_back("b/4");
       
-      tab_duration[note.Get_Cnt()%8] = note.Get_Duration();
-     
+      tab_duration_temp.push_back(note.Get_Duration());
     }
-    
-    cnt_tamp = note.Get_Cnt();
   }
-
-  
 }
 
- String Sheet::Get_Tab_Name(int i){
-  return tab_name[i];
+ vector<String> Sheet::Get_Tab_Name(){
+  return tab_name;
  }
 
  
- String Sheet::Get_Tab_Duration(int i){
-  return tab_duration[i];
+ vector<String> Sheet::Get_Tab_Duration(){
+  return tab_duration;
  }
