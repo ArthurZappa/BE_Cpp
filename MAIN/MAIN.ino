@@ -1,13 +1,11 @@
 #include "App.h"
 #include "Screen.h"
-//#include "Micro.h"
 #include "Note.h"
 #include "Sheet.h"
 
 
 App app;
 Screen screen;
-//Micro micro;
 Sheet sheet;
 Note note;
 
@@ -17,7 +15,6 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
   app.Init_Server();
-  //micro.Init_Micro();
   screen.Init_Screen();
 }
 

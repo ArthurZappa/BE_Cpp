@@ -6,7 +6,6 @@ vector<String> Sheet::tab_duration;
 Sheet::Sheet(){
    previous_millis = 0;
    current_millis = 0;
-  //cnt_temp=0;
 }
 
 

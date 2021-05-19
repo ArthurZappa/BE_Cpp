@@ -47,7 +47,7 @@ class App{
 
 
   bool beginning; // used to check if we are at the beginning of a measure because the display is different
-  int cnt_tamp;
+
 /**
    * @brief Create a wifi server
    * @param char* id: network name

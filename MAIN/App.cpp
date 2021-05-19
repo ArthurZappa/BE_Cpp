@@ -1,7 +1,7 @@
 #include "App.h"
 
-#define WIFI_LOG "Emmintal"
-#define PASSWORD "hZrW4uMY63dmSvR4cU"
+#define WIFI_LOG "iPhone de Arthur"
+#define PASSWORD "lemotdepasse"
 
 
 
@@ -11,7 +11,6 @@ App::App(): server(80) {
   start_record = 0;
   choose_file = 0;
   beginning = true;
-  cnt_tamp = 0;
   time_measure = "";
 } //constructor who initializes server http : port 80
 
@@ -156,8 +155,8 @@ void App::Html_Display(void) {
    // this->client.println("stave4.addClef(\"treble\").addTimeSignature(\"4/4\");stave4.setContext(context).draw();");
     this->client.println("stave2.addClef(\"treble\").addTimeSignature(\"4/4\");stave2.setContext(context).draw();</script>");// add features like timesignature and clef
     
-    if (measure_name.size() == 8) {
-      this->client.println("<meta http-equiv=\"refresh\" content="+ time_measure +">");
+    if (measure_name.size() >= 8) {
+      
       this->client.println("<script>var notesMeasure1 = [");
 
       for (int i=0 ; i<4 ; i++){

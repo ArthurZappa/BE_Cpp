@@ -60,12 +60,8 @@ double Micro::FFT(){
 }
 
  void Micro::Manage_Micro(void) {
-  //if (analogRead(PIN_MICRO) > THRESHOLD) {
-    Sampling();
-    this->fondamental_frequency = FFT();
-    //Serial.println(fondamental_frequency);
-  //} 
-  //else {fondamental_frequency = 0;}
+  Sampling();
+  this->fondamental_frequency = FFT();
  }
 
  double Micro::Get_Fondamental(void) {
